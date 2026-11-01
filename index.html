@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BJJ Lesson Library</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap">
+<style>
+:root{--bg:#070b19;--nav:#0a1022;--card:#0f1630;--ink:#fff;--muted:#9aa4c0;--accent:#1e8bff;--accent2:#35d07f;--line:#222b4a}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1200px 500px at 70% -10%,#13204a55,transparent),var(--bg);color:var(--ink);font-family:Montserrat,system-ui,sans-serif;line-height:1.5}
+.banner{background:#0b1330;border-bottom:1px solid var(--line);text-align:center;padding:10px 14px;font-size:13px;color:#dfe5f7}
+.banner .b{background:#12307a;color:#5fb0ff;font-weight:700;font-size:11px;padding:4px 8px;border-radius:5px;margin-right:8px;letter-spacing:.04em}
+.banner a{color:var(--accent);font-weight:600;margin-left:8px;text-decoration:none}
+nav{background:var(--nav);border-bottom:1px solid var(--line)}
+nav div{max-width:1140px;margin:0 auto;padding:16px 20px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-weight:800;letter-spacing:.04em;font-size:18px}.logo span{color:var(--accent)}
+.navbtn{border:1px solid #fff;border-radius:8px;padding:8px 14px;font-size:14px;font-weight:600}
+.hero{max-width:1140px;margin:0 auto;padding:44px 20px 18px}
+.pills{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px}
+.pill{border:1px solid #2b3556;background:#0c1330;border-radius:99px;padding:8px 16px;font-size:13px;font-weight:600}
+h1{margin:0;font-size:clamp(34px,6vw,64px);line-height:1.02;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;max-width:780px}
+.sub{color:var(--muted);font-size:16px;margin-top:16px;max-width:560px}
+main{max-width:1140px;margin:0 auto;padding:18px 20px 50px;display:grid;grid-template-columns:310px 1fr;gap:24px}
+@media(max-width:860px){main{grid-template-columns:1fr}}
+.search{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card);font:inherit;font-size:14px;color:var(--ink)}
+.search::placeholder{color:#6d7798}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.chip{border:1px solid #2b3556;background:#0c1330;color:var(--ink);padding:6px 13px;border-radius:99px;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
+.chip.on{background:var(--accent);border-color:var(--accent)}
+.item{display:flex;gap:12px;padding:12px;border:1px solid var(--line);background:var(--card);border-radius:14px;cursor:pointer;margin-bottom:10px;align-items:center}
+.item.on{border-color:var(--accent);box-shadow:0 0 0 2px #1e8bff33}
+.item img{width:48px;height:64px;object-fit:cover;border-radius:8px}
+.item b{font-size:14px;display:block;font-weight:700}
+.item small{color:var(--muted);font-size:12px}
+.soon{border-style:dashed;color:var(--muted);cursor:default;justify-content:center;font-size:13px;padding:16px}
+.stage{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px}
+.player{display:grid;grid-template-columns:minmax(0,300px) 1fr;gap:22px}
+@media(max-width:640px){.player{grid-template-columns:1fr}}
+video{width:100%;border-radius:14px;background:#000;max-height:70vh}
+.code{font-size:12px;color:var(--accent);letter-spacing:.1em;font-weight:700}
+h2{margin:2px 0 8px;font-size:24px;font-weight:800;text-transform:uppercase;line-height:1.15}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 12px}
+.tag{font-size:11px;padding:4px 10px;border-radius:99px;background:#16204a;color:#a9c4ff;font-weight:600}
+.meta{font-size:13px;color:var(--muted);margin-bottom:10px}
+h3{font-size:13px;margin:20px 0 8px;text-transform:uppercase;letter-spacing:.12em;color:var(--accent2);font-weight:700}
+.chap{list-style:none;padding:0;margin:0}
+.chap li{display:flex;gap:12px;padding:9px 10px;border-radius:10px;cursor:pointer;font-size:14px;align-items:baseline}
+.chap li:hover{background:#151e40}
+.chap li.now{background:#10306b}
+.chap .t{color:var(--accent);font-weight:700;min-width:42px;font-variant-numeric:tabular-nums}
+.chap .d{color:var(--muted);font-size:12px;display:block}
+.ok{margin-top:16px;font-size:14px;display:flex;gap:8px;align-items:center}
+.note{margin-top:16px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px}
+.empty{padding:30px;text-align:center;color:var(--muted)}
+
+.folders{display:flex;flex-direction:column;gap:12px}
+.fbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 24px;border:1px solid var(--line);background:var(--card);border-radius:16px;cursor:pointer;transition:border-color .15s,background .15s}
+.fbar:hover{border-color:var(--accent);background:#121b3a}
+.fbar h2{margin:0;font-size:clamp(20px,3.4vw,30px);font-weight:800;text-transform:uppercase;letter-spacing:-.005em}
+.fbar p{margin:4px 0 0;color:var(--muted);font-size:13px}
+.fbar .n{white-space:nowrap;font-size:13px;color:#a9c4ff;font-weight:700;display:flex;align-items:center;gap:12px}
+.fbar .arr{color:var(--accent);font-size:22px}
+.back{background:none;border:1px solid #2b3556;color:var(--ink);border-radius:99px;padding:7px 14px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:14px}
+.back:hover{border-color:var(--accent)}
+.vtitle{margin:0 0 4px;font-size:clamp(24px,4vw,38px);font-weight:800;text-transform:uppercase}
+.vdesc{color:var(--muted);margin-bottom:18px;font-size:14px}
+.rtitle{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent2);font-weight:700;margin:6px 0 10px}
+main{display:block!important;max-width:900px}
+
+.banner{display:flex;align-items:center;gap:12px;text-align:left;padding:10px 16px;overflow:hidden}
+.banner .b{flex:none;margin-right:0}
+.mq{flex:1;overflow:hidden;white-space:nowrap;mask-image:linear-gradient(90deg,transparent,#000 24px,#000 calc(100% - 24px),transparent)}
+.mqt{display:inline-flex;animation:mq 30s linear infinite;will-change:transform}
+.mq:hover .mqt{animation-play-state:paused}
+.mqi{display:inline-block;padding-right:56px;cursor:pointer;color:#dfe5f7}
+.mqi b{color:#fff;font-weight:700}.mqi i{font-style:normal;color:#5fb0ff;font-weight:600}
+.mqi:hover b{text-decoration:underline}
+@keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion:reduce){.mqt{animation:none}}
+
+.coffee{max-width:900px;margin:10px auto 50px;padding:0 20px}
+.cbox{border:1px dashed #2b3556;background:var(--card);border-radius:18px;padding:22px;text-align:center}
+.cbox h4{margin:0 0 6px;font-size:20px;font-weight:800;text-transform:uppercase}
+.cbox p{margin:4px 0;color:var(--muted);font-size:14px}
+.cbox .amt{color:#a9c4ff;font-weight:700}
+.cbtn{margin-top:14px;background:var(--accent);color:#fff;border:0;border-radius:10px;padding:11px 20px;font:inherit;font-weight:700;font-size:14px;cursor:pointer}
+.cbtn:hover{filter:brightness(1.1)}
+.qr{display:none;margin-top:18px}
+.qr.on{display:block}
+.qr img{width:100%;max-width:300px;border-radius:14px;background:#fff}
+.favbtn{background:transparent;border:1px solid var(--accent);color:#a9c4ff}.favbtn.on{background:var(--accent);color:#fff}
+.svmsg{font-family:Montserrat,system-ui,sans-serif;font-size:13px;color:var(--muted);margin-left:10px}
+.navr{display:flex;gap:10px;align-items:center}
+a.navbtn{color:#fff;text-decoration:none;font-size:14px;font-weight:600}
+a.navbtn:hover{border-color:var(--accent);color:#a9c4ff}
+#navfc{color:#a9c4ff}
+.src{font-size:13px;color:var(--muted);margin:-4px 0 10px}.src a{color:#7db8ff;font-weight:600;text-decoration:none}.src a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="banner"><span class="b">NEW</span><div class="mq"><div class="mqt" id="mqt"></div></div></div>
+<nav><div><span class="logo">BJJ<span>LIBRARY</span></span><span class="navr"><a class="navbtn" href="#favorites">&#9733; Favorites <span id="navfc"></span></a><a class="navbtn" href="#home" id="navhome">Home</a></span></div></nav>
+<section class="hero">
+  <div class="pills"><span class="pill" id="count"></span><span class="pill">Chaptered videos</span></div>
+  <h1>Learn jiu-jitsu one lesson at a time</h1>
+  <div class="sub">Tap any timestamp to jump to that part of the video.</div>
+</section>
+<main>
+  <input class="search" id="q" placeholder="Search all lessons, techniques, positions...">
+  <div id="view" style="margin-top:18px"></div>
+</main>
+<section class="coffee" id="coffee">
+  <div class="cbox">
+    <h4>&#9749; Buy me a coffee</h4>
+    <p>Created by <b style="color:#fff">Trung Dũng</b></p>
+    <button class="cbtn" id="cbtn">Click to reveal</button>
+    <div class="qr" id="qr">
+<p>If this library helps your training, a coffee of <span class="amt">5,000 to 10,000 VND</span> is a great way to support new lessons.</p>
+<img src="donate-qr.jpg" alt="Bank QR code to support the creator, Trung Dũng"></div>
+  </div>
+</section>
+<script>
+const LESSONS=[{
+ id:"BJJ-001",
+ added:"2026-11-01T02:42:45Z",
+ title:"20+ Subs from Side Control",
+ position:"Side control",
+ folder:"top-control",
+ group:"Submission",
+ mode:"No-gi",
+ level:"Advanced",
+ order:11,
+ dur:"2:58",
+ src:"lesson.mp4",poster:"poster.jpg",
+ tags:["Americana","Kimura","Armbar","Bicep slicer","Arm triangle","North south choke","Reverse kesa gatame","Toe hold","Calf slicer","Knee bar","Heel hook","Rear naked choke"],
+ summary:"20+ submissions from side control in one continuous chain, where each submission is the exit when the previous one gets defended. Study it as \"if X fails, go to Y\" rather than as separate techniques.",
+ points:[
+  "Keep your body weight driving into the opponent through every transition.",
+  "Use the opponent's defensive reaction to enter the next attack.",
+  "Drill both sides: the wrist lock and bicep slicer work on either arm.",
+  "If the submission does not finish, take the back for the choke or move to the legs."
+ ],
+ chapters:[
+  [3,"Opening bicep slicer",""],
+  [14,"Classic Americana","Extend the arm, keep it straight, drive the head down"],
+  [24,"Kimura","Step over the head, pull the opponent through, peel the arm to finish"],
+  [38,"Kimura defended: bicep slicer and wrist lock",""],
+  [44,"Armbar from sitting through","Keep the crisscross grip, peel the arm back, place it straight behind your hips"],
+  [65,"Wrist lock into Americana using the hip",""],
+  [74,"Open grab bicep variation","Wrap the arm, scoop up, lock, flex through the chest"],
+  [80,"Classic arm triangle","Stop the arm crossing the body, drive the head, look up"],
+  [98,"Half position with many options","Head crank, north south choke, body triangle, straight armbar"],
+  [121,"Reverse kesa gatame","Bicep slicer, toe hold, drive body weight through"],
+  [134,"Nothing works: take the back","Scoop over the head, set the hooks, choke"],
+  [146,"Passing into calf slicer and knee bar","Knee comes in, sit across, kick off and slide to the ankle"],
+  [162,"Heel hook","Roll over, finish from the inside heel hook angle"]
+ ]
+},{
+ id:"BJJ-002",
+ added:"2026-11-01T02:51:48Z",
+ title:"3 Simple Triangle Entries",
+ position:"Mixed positions",
+ folder:"submissions",
+ group:"Submission",
+ mode:"No-gi",
+ level:"Intermediate",
+ order:4,
+ dur:"0:12",
+ src:"lesson2.mp4",poster:"poster2.jpg",
+ tags:["Triangle choke","Side control","Closed guard","K-guard"],
+ summary:"A quick clip showing three simple ways to enter the triangle choke: from side control, from closed guard and from K-guard.",
+ points:[
+  "One finish, three different starting positions.",
+  "It is a short clip, so use it as a quick reference and then drill each entry slowly with a partner."
+ ],
+ chapters:[
+  [2,"Entry 1: Side control",""],
+  [4,"Entry 2: Closed guard",""],
+  [8,"Entry 3: K-guard",""]
+ ]
+},{
+ id:"BJJ-003",
+ added:"2026-11-01T03:02:21Z",
+ title:"K Guard -> False Reap",
+ position:"K-guard",
+ folder:"guard",
+ group:"Leg entanglement",
+ mode:"No-gi",
+ level:"Advanced",
+ order:13,
+ dur:"0:41",
+ src:"lesson3.mp4",poster:"poster3.jpg",
+ tags:["K-guard","False reap","Leg entanglement","Triangle legs"],
+ summary:"How to go from K-guard into the false reap position, then dive the head through and finish in the double trouble position.",
+ points:[
+  "Scoop the partner's leg so his knee sits on the back of your hamstring.",
+  "Stay connected to his leg: your opposite hand grabs behind his knee, your right hand comes around to the top of his quad.",
+  "Your knee travels from the inside of his leg to the outside, then your outside leg comes in.",
+  "From false reap you can dive your head through and triangle your legs."
+ ],
+ chapters:[
+  [9,"Setup from K-guard","Scoop the partner's leg, his knee on the back of your hamstring"],
+  [16,"Stay connected to the leg","Opposite hand grabs behind his knee"],
+  [21,"Right hand to the top of the quad",""],
+  [25,"Knee goes from inside to outside","Then your outside leg comes in"],
+  [33,"False reap position",""],
+  [36,"Dive the head through","Triangle the legs and finish in double trouble"]
+ ]
+},{
+ id:"BJJ-004",
+ added:"2026-11-01T03:07:07Z",
+ title:"11 Side Control Attacks! (Technically Kuzure Kesa Gatame)",
+ position:"Side control",
+ folder:"top-control",
+ group:"Attacks",
+ mode:"Gi",
+ level:"Intermediate",
+ order:8,
+ dur:"0:30",
+ src:"lesson4.mp4",poster:"poster4.jpg",
+ source:{name:"@thefighthub_official",extra:"The Fight Hub",platform:"TikTok",url:"https://www.tiktok.com/@thefighthub_official"},
+ tags:["Side control","Kuzure kesa gatame","Gi","Attack chain"],
+ summary:"Eleven attacks from side control (technically kuzure kesa gatame), shown back to back with an on-screen counter. From The Fight Hub.",
+ points:[
+  "Eleven attacks from one position: learn them as options, not as eleven separate lessons.",
+  "The video has no captions, so the attacks are marked by number. Add the technique names once you have them."
+ ],
+ chapters:[
+  [4,"Attack 1",""],
+  [5,"Attack 2",""],
+  [7,"Attack 3",""],
+  [9,"Attack 4",""],
+  [13,"Attack 5",""],
+  [14,"Attack 6",""],
+  [17,"Attack 7",""],
+  [22,"Attack 8",""],
+  [23,"Attack 9",""],
+  [27,"Attack 10",""],
+  [28,"Attack 11",""]
+ ]
+},{
+ id:"BJJ-005",
+ added:"2026-11-01T03:10:30Z",
+ title:"Kesa Gatame Escape: Elbow Down and Take the Back",
+ position:"Kesa gatame (bottom)",
+ folder:"escapes-and-defense",
+ group:"Escape",
+ mode:"No-gi",
+ level:"Intermediate",
+ order:5,
+ dur:"0:32",
+ src:"lesson5.mp4",poster:"poster5.jpg",
+ source:{name:"@jordanteachesjiujitsu",platform:"TikTok",url:"https://www.tiktok.com/@jordanteachesjiujitsu"},
+ tags:["Kesa gatame","Side control escape","Take the back"],
+ summary:"How to get out of kesa gatame by getting your elbow down and bringing your partner over to take the back, and what to do when a bigger partner resists. From Jordan Teaches Jiu-Jitsu.",
+ points:[
+  "Get your elbow down first: it makes everything after it easier.",
+  "Bringing a bigger partner over is hard, so do not rely on one big pull.",
+  "When he resists, pull him forward first, then to the side."
+ ],
+ chapters:[
+  [0,"Caught in kesa gatame","Get your elbow down"],
+  [6,"Elbow down makes the back easier to take",""],
+  [11,"Bringing the person over","Very hard against a bigger partner"],
+  [16,"First option: pull them over your head",""],
+  [21,"When the partner gives a lot of resistance",""],
+  [24,"Pull them forward",""],
+  [28,"Then to the side",""]
+ ]
+},{
+ id:"BJJ-006",
+ added:"2026-11-01T03:29:13Z",
+ title:"No. 1 Easiest Halfguard Sweep for Whitebelts",
+ position:"Half guard",
+ folder:"sweeps-and-transitions",
+ group:"Sweep",
+ mode:"No-gi",
+ level:"Beginner",
+ order:3,
+ dur:"0:44",
+ src:"lesson6.mp4",poster:"poster6.jpg",
+ source:{name:"@isakivanovicjj",platform:"TikTok",url:"https://www.tiktok.com/@isakivanovicjj"},
+ tags:["Half guard","Shift sweep","Knee shield","Beginner"],
+ summary:"The shift sweep from half guard, taught as the easiest sweep for white belts. From @isakivanovicjj.",
+ points:[
+  "Set up first with a scissor and knee shield to balance your partner.",
+  "Keep your head close and get underneath your partner.",
+  "The low leg shift is the critical step.",
+  "If your partner tries to stand, torque on his knee and finish the sweep."
+ ],
+ chapters:[
+  [8,"The sweep: the shift sweep",""],
+  [12,"Set up: scissor and knee shield","Balance your partner"],
+  [18,"Keep your head close",""],
+  [22,"Get underneath",""],
+  [24,"Critical step: the low leg shift",""],
+  [28,"Your knee comes through",""],
+  [31,"When he tries to stand",""],
+  [33,"Torque on his knee",""],
+  [39,"Walk, catch and finish the sweep",""]
+ ]
+},{
+ id:"BJJ-007",
+ added:"2026-11-01T03:42:14Z",
+ title:"3 Sweeps Every White Belt Should Know",
+ position:"Mixed positions",
+ folder:"sweeps-and-transitions",
+ group:"Sweep",
+ mode:"Gi",
+ level:"Beginner",
+ order:2,
+ dur:"0:31",
+ src:"lesson7.mp4",poster:"poster7.jpg",
+ source:{name:"@edward_scissor_hands_bjj",platform:"TikTok",url:"https://www.tiktok.com/@edward_scissor_hands_bjj"},
+ tags:["Scissor sweep","Hip bump sweep","Half guard sweep","Underhook","Gi","Beginner"],
+ summary:"Three basic sweeps for white belts: the scissor sweep, the hip bump sweep and a half guard sweep with the underhook. From @edward_scissor_hands_bjj.",
+ points:[
+  "Scissor sweep: pull your partner toward you as you scissor, so you come up on top.",
+  "Hip bump: put your foot on the floor and lift your hips up instantly. If your butt stays down, your partner can pass. Push off that foot to guarantee the sweep.",
+  "Half guard: get the underhook. When your partner whizzers your arm, dive under, remove your leg and sweep to the side."
+ ],
+ chapters:[
+  [3,"Sweep 1: Scissor sweep","Pull toward you as you scissor"],
+  [11,"Sweep 2: Hip bump","Foot on the floor, hips go up instantly"],
+  [17,"Why the hips must go up","If your butt stays down, they can pass"],
+  [22,"Sweep 3: Half guard with the underhook","Dive under when she whizzers, then sweep to the side"]
+ ]
+},{
+ id:"BJJ-008",
+ added:"2026-11-01T03:53:21Z",
+ title:"How To: Hip Bump Sweep",
+ position:"Guard",
+ folder:"sweeps-and-transitions",
+ group:"Sweep",
+ mode:"No-gi",
+ level:"Beginner",
+ order:1,
+ dur:"0:21",
+ src:"lesson8.mp4",poster:"poster8.jpg",
+ source:{name:"@jessejamesjitsu",platform:"TikTok",url:"https://www.tiktok.com/@jessejamesjitsu"},
+ tags:["Hip bump sweep","Guard","Beginner","Drilling"],
+ summary:"How to do a proper hip bump sweep: what to avoid, where to post, and how to drill it. From @jessejamesjitsu.",
+ points:[
+  "Get your partner's hands off your hips first.",
+  "Do not go up on your elbow. Post your hand instead.",
+  "Wrap your arm around his shoulder, circling around the armpit, then post your foot and drive your hip into him.",
+  "Once you have the technique, drill it back and forth and side to side, then finish with an actual rep."
+ ],
+ chapters:[
+  [2,"Get the hands off your hips",""],
+  [4,"Wrong: going up on your elbow",""],
+  [7,"Right: post your hand",""],
+  [9,"Wrap your arm around his shoulder","Circle around the armpit"],
+  [13,"Post your foot and drive your hip into him",""],
+  [15,"Drill it: back and forth, side to side",""],
+  [18,"Finish with an actual rep",""]
+ ]
+},{
+ id:"BJJ-009",
+ added:"2026-11-01T04:04:09Z",
+ title:"Complete Outside Passing System (Big Brain Edition)",
+ position:"Open guard (passing)",
+ folder:"guard-passing",
+ group:"Pass",
+ mode:"No-gi",
+ level:"Intermediate",
+ order:9,
+ dur:"0:25",
+ src:"lesson9.mp4",poster:"poster9.jpg",
+ source:{name:"@danielthemanchild",platform:"TikTok",url:"https://www.tiktok.com/@danielthemanchild"},
+ tags:["Outside passing","Torreando pass","Cross scoop pass","North south pass","Shin mount","High step pass","Two handed drag"],
+ summary:"A decision tree for passing on the outside: start by flanking, then pick the pass that matches how your partner reacts. From @danielthemanchild.",
+ points:[
+  "Start by flanking, then get the hip and knee post.",
+  "No defence: torreando pass.",
+  "High pummel blocks: cross scoop pass.",
+  "High pummel threat: use the near hip block, then go to the far shoulder for the north south pass.",
+  "No hip access: cross over step, knee across, post your hands and land in shin mount.",
+  "Wide legs: high step pass. If your partner spins to face you, use the two handed drag into shin mount."
+ ],
+ chapters:[
+  [0,"Start: flank, then hip and knee post",""],
+  [3,"No defence","Torreando pass"],
+  [6,"High pummel blocks","Cross scoop pass"],
+  [9,"High pummel threat","Near hip block, then far shoulder into the north south pass"],
+  [12,"No hip access","Cross over step, knee across, post hands, shin mount"],
+  [18,"Wide legs","High step pass"],
+  [20,"Partner spins to face you","Two handed drag into shin mount"]
+ ]
+}
+,{
+ id:"BJJ-010",
+ added:"2026-11-01T04:34:14Z",
+ title:"How to pass open guard",
+ position:"Open guard (passing)",
+ folder:"guard-passing",
+ group:"Pass",
+ mode:"No-gi",
+ level:"Intermediate",
+ order:6,
+ dur:"0:38",
+ src:"lesson10.mp4",poster:"poster10.jpg",
+ source:{name:"@nategrapples",extra:"The Grappling Lab",platform:"TikTok",url:"https://www.tiktok.com/@nategrapples"},
+ tags:["Open guard","Guard passing","Standing pass"],
+ summary:"A spoken lesson on how to pass open guard, with a demonstration from standing over your partner's legs into top control.",
+ points:[
+  "This video is spoken without captions, so the steps are marked by what you see, not by technique names.",
+  "Add the technique names here once you have them."
+ ],
+ chapters:[
+  [0,"Preview",""],
+  [6,"Explanation",""],
+  [16,"Demo: standing over the legs",""],
+  [30,"Finish in top control",""]
+ ]
+},{
+ id:"BJJ-011",
+ added:"2026-11-01T04:34:14Z",
+ title:"The Money Tree: Single Outside X Guard to Reverse X Guard",
+ position:"X-guard",
+ folder:"guard",
+ group:"Guard entry",
+ mode:"No-gi",
+ level:"Advanced",
+ order:10,
+ dur:"2:11",
+ src:"lesson11.mp4",poster:"poster11.jpg",
+ source:{name:"@unclecoachkevinbjj",extra:"Gracie Trinity",platform:"TikTok",url:"https://www.tiktok.com/@unclecoachkevinbjj"},
+ tags:["X-guard","Reverse X-guard","Single outside","Money tree","Triangle"],
+ summary:"The money tree: entering from single outside into X-guard and reverse X-guard, with the grips and connections that keep it working.",
+ points:[
+  "Grab the wrist and arm first, then connect your leg through underneath.",
+  "Keep your connection real high on the shoulders.",
+  "Switch between single outside, X-guard and reverse X-guard as your partner steps wide.",
+  "From the top of the position you can hook the leg, grab the wrist, pull your partner in and scoop the far side leg.",
+  "Behind the knee you can also find a triangle, or switch back to single outside."
+ ],
+ chapters:[
+  [3,"The money tree",""],
+  [11,"The idea: single outside into X-guard",""],
+  [28,"Where it comes from","Credited to Robby Donofrio"],
+  [34,"Grips","Wrist and arm"],
+  [40,"Connections","Leg through underneath, real high on the shoulders"],
+  [49,"The single outside position",""],
+  [56,"When your partner steps wide","Into X-guard"],
+  [60,"Switch into reverse X-guard",""],
+  [77,"Hooking the leg and grabbing the wrist",""],
+  [88,"Pull in and scoop the far side leg",""],
+  [94,"Behind the knee and the triangle",""],
+  [100,"Switch back to single outside",""],
+  [108,"Control and leg lock options",""]
+ ]
+},{
+ id:"BJJ-012",
+ added:"2026-11-01T04:34:14Z",
+ title:"3 Leglock Entries from DelaRiva",
+ position:"De La Riva guard",
+ folder:"submissions",
+ group:"Leg lock",
+ mode:"No-gi",
+ level:"Advanced",
+ order:12,
+ dur:"0:13",
+ src:"lesson12.mp4",poster:"poster12.jpg",
+ source:{name:"@jugjitsu",platform:"TikTok",url:"https://www.tiktok.com/@jugjitsu"},
+ tags:["De La Riva","Shallow K","Double 50/50","Waiter X","Footlock","Outside heel hook"],
+ summary:"Three leg lock entries from De La Riva guard.",
+ points:[
+  "DelaRiva to shallow K to double 50/50.",
+  "DelaRiva to waiter X to footlock.",
+  "DelaRiva to scooping the far leg to the outside heel hook."
+ ],
+ chapters:[
+  [0,"Entry 1: DelaRiva to shallow K to double 50/50",""],
+  [4,"Entry 2: DelaRiva to waiter X to footlock",""],
+  [9,"Entry 3: DelaRiva, scoop the far leg to outside heel hook",""]
+ ]
+},{
+ id:"BJJ-013",
+ added:"2026-11-01T04:34:14Z",
+ title:"Three Entries You Should Know From Open Guard",
+ position:"Open guard",
+ folder:"guard",
+ group:"Guard entry",
+ mode:"No-gi",
+ level:"Intermediate",
+ order:7,
+ dur:"0:21",
+ src:"lesson13.mp4",poster:"poster13.jpg",
+ source:{name:"@abyssjiujitsu",platform:"TikTok",url:"https://www.tiktok.com/@abyssjiujitsu"},
+ tags:["Open guard","Two on one","X-guard","SLX","Single leg"],
+ summary:"Three entries from open guard, all starting from a two on one grip: to X, to SLX and to a single leg.",
+ points:[
+  "All three entries start from the same two on one grip.",
+  "Pick the entry that matches your partner's reaction: X, SLX or single leg."
+ ],
+ chapters:[
+  [2,"Two on one to X",""],
+  [8,"Two on one to SLX",""],
+  [14,"Two on one to single leg",""]
+ ]
+},{
+ id:"BJJ-014",
+ added:"2026-11-01T06:42:04Z",
+ title:"Kneebar: Control the Secondary Leg",
+ position:"Leg entanglement",
+ folder:"submissions",
+ group:"Leg lock",
+ mode:"No-gi",
+ level:"Intermediate",
+ order:9.5,
+ dur:"0:17",
+ src:"lesson14.mp4",poster:"poster14.jpg",
+ source:{name:"Oliver Taza",platform:"Facebook"},
+ tags:["Kneebar","Leg lock","Secondary leg"],
+ summary:"A kneebar sequence on one idea: most of your opponent's defence comes from the secondary leg, so get to positions where you can finish while controlling it.",
+ points:[
+  "Most of your opponent's defence comes from the secondary leg.",
+  "Aim for situations where you can apply the finish while controlling the secondary leg.",
+  "Controlling the secondary leg increases your chances of finishing."
+ ],
+ chapters:[
+  [0,"Entry from standing",""],
+  [2,"Kneebar","On-screen label"],
+  [4,"Full sequence from entry to finish",""]
+ ]
+}
+];
+const FOLDERS=[
+ {id:"standing-and-takedowns",name:"Standing and Takedowns",desc:"Stand-up, throws, takedowns and guard pulls"},
+ {id:"guard",name:"Guard",desc:"Closed guard, open guard, K-guard, half guard"},
+ {id:"guard-passing",name:"Guard Passing",desc:"Getting past the legs to a dominant position"},
+ {id:"top-control",name:"Top Control",desc:"Side control, mount, knee on belly, north south"},
+ {id:"back-control",name:"Back Control",desc:"Taking, keeping and finishing from the back"},
+ {id:"submissions",name:"Submissions",desc:"Chokes, arm locks and leg locks"},
+ {id:"sweeps-and-transitions",name:"Sweeps and Transitions",desc:"Reversals and moving between positions"},
+ {id:"escapes-and-defense",name:"Escapes and Defense",desc:"Surviving bad positions and stopping attacks"},
+ {id:"concepts-and-game-plans",name:"Concepts and Game Plans",desc:"Principles, drills and strategy"}
+];
+const $=s=>document.querySelector(s);
+let done={},fav={};
+try{done=JSON.parse(localStorage.getItem("bjjdone")||"{}")}catch(e){}
+try{fav=JSON.parse(localStorage.getItem("bjjfav")||"{}")}catch(e){}
+function saveFav(){try{localStorage.setItem("bjjfav",JSON.stringify(fav))}catch(e){}}
+function favCount(){return LESSONS.filter(l=>fav[l.id]).length}
+function fmt(s){return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")}
+function byOrder(a,b){return a.order-b.order}
+function inFolder(f){return LESSONS.filter(l=>l.folder===f).sort(byOrder)}
+function counts(){$("#navfc").textContent=favCount()?"("+favCount()+")":"";$("#count").textContent=LESSONS.length+(LESSONS.length===1?" lesson":" lessons")+" · "+LESSONS.filter(l=>done[l.id]).length+" completed"}
+function item(l){
+  return `<div class="item" data-i="${LESSONS.indexOf(l)}"><img src="${l.poster}" alt=""><div><b>${fav[l.id]?"\u2605 ":""}${l.title} ${done[l.id]?"✓":""}</b><small>${l.position} · ${l.dur} · ${l.level}</small></div></div>`;
+}
+function bindItems(){document.querySelectorAll(".item[data-i]").forEach(e=>e.onclick=()=>{location.hash="lesson-"+e.dataset.i})}
+function home(){
+  const q=$("#q").value.toLowerCase().trim();
+  if(q){
+    const r=LESSONS.filter(l=>(l.title+" "+l.tags.join(" ")+" "+l.position+" "+l.summary).toLowerCase().includes(q)).sort(byOrder);
+    $("#view").innerHTML='<div class="rtitle">Search results</div>'+(r.length?r.map(item).join(""):'<div class="empty">No matching lessons</div>');
+    bindItems();return;
+  }
+  $("#view").innerHTML='<div class="folders">'+FOLDERS.map(f=>{const n=inFolder(f.id).length;
+    return `<div class="fbar" data-f="${f.id}"><div><h2>${f.name}</h2><p>${f.desc}</p></div><div class="n">${n} ${n===1?"lesson":"lessons"}<span class="arr">›</span></div></div>`}).join("")+'</div>';
+  document.querySelectorAll(".fbar").forEach(e=>e.onclick=()=>{location.hash=e.dataset.f});
+}
+function favorites(){
+  const ls=LESSONS.filter(l=>fav[l.id]).sort(byOrder);
+  $("#view").innerHTML=`<button class="back" id="bk">\u2039 All folders</button><h2 class="vtitle">\u2605 My Favorites</h2><div class="vdesc">Lessons you saved to watch again, sorted from easiest to hardest. Saved in this browser only.</div>`+
+   (ls.length?ls.map(item).join(""):'<div class="empty">No favorites yet. Open a lesson and tap "Add to favorites".</div>');
+  $("#bk").onclick=()=>{location.hash="home"};bindItems();
+}
+function folder(id){
+  const f=FOLDERS.find(x=>x.id===id);if(!f){location.hash="home";return}
+  const ls=inFolder(id);
+  $("#view").innerHTML=`<button class="back" id="bk">‹ All folders</button><h2 class="vtitle">${f.name}</h2><div class="vdesc">${f.desc} · Sorted from easiest to hardest</div>`+
+   (ls.length?ls.map(item).join(""):'<div class="empty">No lessons in this folder yet</div>');
+  $("#bk").onclick=()=>{location.hash="home"};bindItems();
+}
+function lesson(i){
+  const l=LESSONS[i];if(!l){location.hash="home";return}
+  const f=FOLDERS.find(x=>x.id===l.folder);
+  $("#view").innerHTML=`<button class="back" id="bk">‹ ${f?f.name:"All folders"}</button><div class="stage"><div class="player">
+   <div><video id="v" controls playsinline preload="metadata" poster="${l.poster}" src="${l.src}"></video></div>
+   <div><h2>${l.title}</h2>
+    <div class="meta">${l.position} · ${l.group} · ${l.mode} · ${l.level} · ${l.dur}</div>
+    ${l.source?`<div class="src">Source: ${l.source.url?`<a href="${l.source.url}" target="_blank" rel="noopener">${l.source.name}</a>`:`<b>${l.source.name}</b>`}${l.source.extra?" ("+l.source.extra+")":""} on ${l.source.platform}</div>`:""}
+    <div>${l.summary}</div>
+    <div class="tags">${l.tags.map(t=>`<span class="tag">${t}</span>`).join("")}</div>
+    <button class="cbtn favbtn" id="fv"></button></div></div>
+   <h3>Chapters</h3>
+   <ul class="chap" id="chap">${l.chapters.map(c=>`<li data-t="${c[0]}"><span class="t">${fmt(c[0])}</span><span>${c[1]}${c[2]?`<span class="d">${c[2]}</span>`:""}</span></li>`).join("")}</ul>
+   <h3>Key points</h3><ul>${l.points.map(p=>`<li>${p}</li>`).join("")}</ul>
+   <label class="ok"><input type="checkbox" id="dn" ${done[l.id]?"checked":""}> Mark this lesson as completed</label>
+   <div class="note">Technique names and timestamps were reconstructed from the on-screen captions and may be off by a few seconds.</div></div>`;
+  $("#bk").onclick=()=>{location.hash=l.folder||"home"};
+  const v=$("#v");
+  document.querySelectorAll("#chap li").forEach(li=>li.onclick=()=>{v.currentTime=+li.dataset.t;v.play().catch(()=>{})});
+  v.ontimeupdate=()=>{let k=-1;l.chapters.forEach((c,j)=>{if(v.currentTime>=c[0])k=j});
+    document.querySelectorAll("#chap li").forEach((li,j)=>li.classList.toggle("now",j===k))};
+  const fb=$("#fv");
+  const paint=()=>{fb.textContent=fav[l.id]?"\u2605 Saved to favorites":"\u2606 Add to favorites";fb.classList.toggle("on",!!fav[l.id])};
+  paint();fb.onclick=()=>{if(fav[l.id])delete fav[l.id];else fav[l.id]=true;saveFav();paint();counts()};
+  $("#dn").onchange=e=>{done[l.id]=e.target.checked;try{localStorage.setItem("bjjdone",JSON.stringify(done))}catch(x){}counts()};
+}
+function route(){
+  counts();
+  const h=location.hash.replace("#","");
+  const isHome=(h===""||h==="home");
+  $("#q").style.display=isHome?"":"none";
+  $("#coffee").style.display=isHome?"":"none";
+  if(h.startsWith("lesson-"))lesson(+h.slice(7));
+  else if(h==="favorites")favorites();
+  else if(h&&h!=="home")folder(h);
+  else home();
+  window.scrollTo(0,0);
+}
+$("#navhome").onclick=()=>{$("#q").value="";if(!location.hash||location.hash==="#home")setTimeout(route,0)};
+$("#q").oninput=()=>{if(!location.hash||location.hash==="#home")home();else location.hash="home"};
+window.addEventListener("hashchange",route);
+route();
+
+function ago(iso){
+  const s=Math.max(0,(Date.now()-new Date(iso).getTime())/1000);
+  if(s<60)return "just now";
+  const m=Math.floor(s/60);if(m<60)return m+(m===1?" minute":" minutes")+" ago";
+  const hr=Math.floor(m/60);if(hr<24)return hr+(hr===1?" hour":" hours")+" ago";
+  const d=Math.floor(hr/24);if(d<30)return d+(d===1?" day":" days")+" ago";
+  const mo=Math.floor(d/30);if(mo<12)return mo+(mo===1?" month":" months")+" ago";
+  const y=Math.floor(d/365);return y+(y===1?" year":" years")+" ago";
+}
+function ticker(){
+  const recent=LESSONS.map((l,i)=>({l,i})).sort((a,b)=>new Date(b.l.added)-new Date(a.l.added)).slice(0,5);
+  const one=recent.map(r=>`<span class="mqi" data-i="${r.i}"><b>${r.l.title}</b> <i>updated ${ago(r.l.added)}</i></span>`).join("");
+  $("#mqt").innerHTML=one+one;
+  document.querySelectorAll(".mqi").forEach(e=>e.onclick=()=>{location.hash="lesson-"+e.dataset.i});
+  const w=$("#mqt").scrollWidth/2;$("#mqt").style.animationDuration=Math.max(15,w/60)+"s";
+}
+ticker();setInterval(ticker,60000);
+$("#cbtn").onclick=()=>{const q=$("#qr");q.classList.toggle("on");$("#cbtn").textContent=q.classList.contains("on")?"Hide":"Click to reveal"};
+</script>
+</body>
+</html>
