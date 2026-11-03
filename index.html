@@ -96,6 +96,15 @@ a.navbtn{color:#fff;text-decoration:none;font-size:14px;font-weight:600}
 a.navbtn:hover{border-color:var(--accent);color:#a9c4ff}
 #navfc{color:#a9c4ff}
 .src{font-size:13px;color:var(--muted);margin:-4px 0 10px}.src a{color:#7db8ff;font-weight:600;text-decoration:none}.src a:hover{text-decoration:underline}
+
+.lotd{display:flex;gap:18px;align-items:center;border:1px solid var(--accent);background:linear-gradient(135deg,#0f1c3d,#0f1630);border-radius:18px;padding:16px;margin-bottom:16px;cursor:pointer}
+.lotd img{width:96px;height:128px;object-fit:cover;border-radius:12px;flex:none}
+.lotd .lk{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2);font-weight:700}
+.lotd h3{margin:4px 0 6px;font-size:clamp(18px,3vw,24px);font-weight:800;text-transform:uppercase;line-height:1.15;letter-spacing:0;color:#fff}
+.lotd p{margin:0 0 10px;color:#c9d2ea;font-size:14px}
+.lotd .lm{font-size:12px;color:var(--muted);margin-bottom:10px}
+.lotd button{background:var(--accent);color:#fff;border:0;border-radius:10px;padding:9px 16px;font:inherit;font-weight:700;font-size:13px;cursor:pointer}
+@media(max-width:560px){.lotd{flex-direction:column;align-items:flex-start}.lotd img{width:100%;height:180px}}
 </style>
 </head>
 <body>
@@ -720,6 +729,24 @@ function item(l){
   return `<div class="item" data-i="${LESSONS.indexOf(l)}"><img src="${l.poster}" alt=""><div><b>${fav[l.id]?"\u2605 ":""}${l.title} ${done[l.id]?"✓":""}</b><small>${l.position} · ${l.dur} · ${l.level}</small></div></div>`;
 }
 function bindItems(){document.querySelectorAll(".item[data-i]").forEach(e=>e.onclick=()=>{location.hash="lesson-"+e.dataset.i})}
+
+function lotdPick(){
+  const n=LESSONS.length;if(!n)return null;
+  const d=new Date();
+  const day=Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/86400000);
+  const cycle=Math.floor(day/n),pos=day%n;
+  let a=(cycle*2654435761+n)>>>0;
+  const rnd=()=>{a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296};
+  const order=LESSONS.map((_,i)=>i).sort((x,y)=>x-y);
+  for(let i=n-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[order[i],order[j]]=[order[j],order[i]]}
+  return order[pos];
+}
+function lotdHtml(){
+  const i=lotdPick();if(i==null)return "";
+  const l=LESSONS[i],f=FOLDERS.find(x=>x.id===l.folder);
+  const dt=new Date().toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});
+  return `<div class="lotd" id="lotd" data-i="${i}"><img src="${l.poster}" alt=""><div><div class="lk">Lesson of the day \u00B7 ${dt}</div><h3>${l.title}</h3><p>${l.summary}</p><div class="lm">${f?f.name+" \u00B7 ":""}${l.level} \u00B7 ${l.dur}</div><button id="lotdgo">Watch now</button></div></div>`;
+}
 function home(){
   const q=$("#q").value.toLowerCase().trim();
   if(q){
@@ -727,9 +754,10 @@ function home(){
     $("#view").innerHTML='<div class="rtitle">Search results</div>'+(r.length?r.map(item).join(""):'<div class="empty">No matching lessons</div>');
     bindItems();return;
   }
-  $("#view").innerHTML='<div class="folders">'+FOLDERS.map(f=>{const n=inFolder(f.id).length;
+  $("#view").innerHTML=lotdHtml()+'<div class="folders">'+FOLDERS.map(f=>{const n=inFolder(f.id).length;
     return `<div class="fbar" data-f="${f.id}"><div><h2>${f.name}</h2><p>${f.desc}</p></div><div class="n">${n} ${n===1?"lesson":"lessons"}<span class="arr">›</span></div></div>`}).join("")+'</div>';
   document.querySelectorAll(".fbar").forEach(e=>e.onclick=()=>{location.hash=e.dataset.f});
+  const lt=document.querySelector("#lotd");if(lt)lt.onclick=()=>{location.hash="lesson-"+lt.dataset.i};
 }
 function favorites(){
   const ls=LESSONS.filter(l=>fav[l.id]).sort(byOrder);
