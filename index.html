@@ -744,8 +744,7 @@ function lotdPick(){
 function lotdHtml(){
   const i=lotdPick();if(i==null)return "";
   const l=LESSONS[i],f=FOLDERS.find(x=>x.id===l.folder);
-  const dt=new Date().toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});
-  return `<div class="lotd" id="lotd" data-i="${i}"><img src="${l.poster}" alt=""><div><div class="lk">Lesson of the day \u00B7 ${dt}</div><h3>${l.title}</h3><p>${l.summary}</p><div class="lm">${f?f.name+" \u00B7 ":""}${l.level} \u00B7 ${l.dur}</div><button id="lotdgo">Watch now</button></div></div>`;
+  return `<div class="lotd" id="lotd" data-i="${i}"><img src="${l.poster}" alt=""><div><div class="lk">Lesson of the day</div><h3>${l.title}</h3><p>${l.summary}</p><div class="lm">${f?f.name+" \u00B7 ":""}${l.level} \u00B7 ${l.dur}</div><button id="lotdgo">Watch now</button></div></div>`;
 }
 function home(){
   const q=$("#q").value.toLowerCase().trim();
