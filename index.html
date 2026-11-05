@@ -104,6 +104,16 @@ a.navbtn:hover{border-color:var(--accent);color:#a9c4ff}
 .lotd p{margin:0 0 10px;color:#c9d2ea;font-size:14px}
 .lotd .lm{font-size:12px;color:var(--muted);margin-bottom:10px}
 .lotd button{background:var(--accent);color:#fff;border:0;border-radius:10px;padding:9px 16px;font:inherit;font-weight:700;font-size:13px;cursor:pointer}
+.want{border:1px solid var(--line);background:var(--card);border-radius:18px;padding:16px;margin-bottom:16px}
+.want h3{margin:0 0 10px;font-size:clamp(16px,2.6vw,20px);font-weight:800;text-transform:uppercase;letter-spacing:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:#0a1022;color:#c9d2ea;border:1px solid var(--line);border-radius:999px;padding:8px 14px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.chip:hover{border-color:var(--accent)}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+#wres{margin-top:14px}
+#wres .lotd{margin-bottom:10px}
+.wbtns{display:flex;gap:8px;flex-wrap:wrap}
+.lotd .wbtns button.alt{background:transparent;border:1px solid var(--accent);color:var(--accent)}
 @media(max-width:560px){.lotd{flex-direction:column;align-items:flex-start}.lotd img{width:100%;height:180px}}
 </style>
 </head>
@@ -947,6 +957,33 @@ function lotdHtml(){
   const l=LESSONS[i],f=FOLDERS.find(x=>x.id===l.folder);
   return `<div class="lotd" id="lotd" data-i="${i}"><img src="${l.poster}" alt=""><div><div class="lk">Lesson of the day</div><h3>${l.title}</h3><p>${l.summary}</p><div class="lm">${f?f.name+" \u00B7 ":""}${l.level} \u00B7 ${l.dur}</div><button id="lotdgo">Watch now</button></div></div>`;
 }
+
+let wantF=null,wantLast=null;
+function wantCard(i){
+  const l=LESSONS[i],f=FOLDERS.find(x=>x.id===l.folder);
+  return `<div class="lotd" id="wcard" data-i="${i}"><img src="${l.poster}" alt=""><div><div class="lk">Today's pick</div><h3>${l.title}</h3><p>${l.summary}</p><div class="lm">${f?f.name+" \u00B7 ":""}${l.level} \u00B7 ${l.dur}</div><div class="wbtns"><button id="wgo">Watch now</button><button class="alt" id="wmore">\u21BB Show another</button></div></div></div>`;
+}
+function wantShow(){
+  const box=$("#wres");if(!box)return;
+  document.querySelectorAll(".chip").forEach(c=>c.classList.toggle("on",c.dataset.f===(wantF||"*")));
+  const pool=LESSONS.map((_,i)=>i).filter(i=>wantF==="*"||LESSONS[i].folder===wantF);
+  if(!pool.length){box.innerHTML="";return}
+  const opts=pool.length>1?pool.filter(i=>i!==wantLast):pool;
+  const i=opts[Math.floor(Math.random()*opts.length)];wantLast=i;
+  box.innerHTML=wantCard(i);
+  $("#wgo").onclick=e=>{e.stopPropagation();location.hash="lesson-"+i};
+  $("#wmore").onclick=e=>{e.stopPropagation();wantShow()};
+  $("#wcard").onclick=()=>{location.hash="lesson-"+i};
+}
+function wantHtml(){
+  const fs=FOLDERS.filter(f=>inFolder(f.id).length);
+  return '<div class="want"><h3>What do you want to train today?</h3><div class="chips">'+
+   fs.map(f=>`<button class="chip" data-f="${f.id}">${f.name}</button>`).join("")+
+   '<button class="chip" data-f="*">Surprise me</button></div><div id="wres"></div></div>';
+}
+function bindWant(){
+  document.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{wantF=c.dataset.f;wantLast=null;wantShow()});
+}
 function home(){
   const q=$("#q").value.toLowerCase().trim();
   if(q){
@@ -954,9 +991,10 @@ function home(){
     $("#view").innerHTML='<div class="rtitle">Search results</div>'+(r.length?r.map(item).join(""):'<div class="empty">No matching lessons</div>');
     bindItems();return;
   }
-  $("#view").innerHTML=lotdHtml()+'<div class="folders">'+FOLDERS.map(f=>{const n=inFolder(f.id).length;
+  $("#view").innerHTML=lotdHtml()+wantHtml()+'<div class="folders">'+FOLDERS.map(f=>{const n=inFolder(f.id).length;
     return `<div class="fbar" data-f="${f.id}"><div><h2>${f.name}</h2><p>${f.desc}</p></div><div class="n">${n} ${n===1?"lesson":"lessons"}<span class="arr">›</span></div></div>`}).join("")+'</div>';
   document.querySelectorAll(".fbar").forEach(e=>e.onclick=()=>{location.hash=e.dataset.f});
+  bindWant();wantF=null;wantLast=null;
   const lt=document.querySelector("#lotd");if(lt)lt.onclick=()=>{location.hash="lesson-"+lt.dataset.i};
 }
 function favorites(){
@@ -1035,6 +1073,6 @@ ticker();setInterval(ticker,60000);
 $("#cbtn").onclick=()=>{const q=$("#qr");q.classList.toggle("on");$("#cbtn").textContent=q.classList.contains("on")?"Hide":"Click to reveal"};
 </script>
 <script data-goatcounter="https://trungdung.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-<script>window.addEventListener("hashchange",function(){try{if(window.goatcounter&&window.goatcounter.count){window.goatcounter.count({path:"/"+(location.hash.slice(1)||"home"),title:document.title,event:false})}}catch(e){}});</script>
+<script>window.addEventListener("hashchange",function(){if(window.goatcounter&&window.goatcounter.count)window.goatcounter.count({path:"/"+(location.hash.slice(1)||"home"),title:document.title,event:false})});</script>
 </body>
 </html>
