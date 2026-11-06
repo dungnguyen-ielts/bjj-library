@@ -56,8 +56,9 @@ h3{font-size:13px;margin:20px 0 8px;text-transform:uppercase;letter-spacing:.12e
 
 .today{margin-bottom:16px}
 .today .item img{display:none}
-.today .trow[hidden]{display:none}
-.tmore{width:100%;background:transparent;border:1px solid var(--line);color:var(--accent);border-radius:12px;padding:10px;font:inherit;font-weight:700;cursor:pointer;margin-top:8px}
+#tlist[hidden]{display:none}
+#tlist{margin-top:8px}
+.tmore{width:100%;background:transparent;border:1px solid var(--line);color:var(--accent);border-radius:12px;padding:12px;font:inherit;font-weight:700;cursor:pointer;text-align:left;display:flex;justify-content:space-between}
 .folders{display:flex;flex-direction:column;gap:12px}
 .fbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 24px;border:1px solid var(--line);background:var(--card);border-radius:16px;cursor:pointer;transition:border-color .15s,background .15s}
 .fbar:hover{border-color:var(--accent);background:#121b3a}
@@ -1239,10 +1240,7 @@ function todayHtml(){
   const L=LESSONS.filter(l=>{if(!l.added)return false;const d=new Date(l.added);return d.getFullYear()+"-"+d.getMonth()+"-"+d.getDate()===k})
     .sort((a,b)=>new Date(b.added)-new Date(a.added)||LESSONS.indexOf(b)-LESSONS.indexOf(a));
   if(!L.length)return "";
-  const cap=5;
-  return '<div class="today"><div class="rtitle">Updated today ('+L.length+')</div>'+
-    L.map((l,j)=>'<div class="trow"'+(j>=cap?' hidden':'')+'>'+item(l)+'</div>').join("")+
-    (L.length>cap?'<button class="tmore" id="tmore">Show all '+L.length+'</button>':'')+'</div>';
+  return '<div class="today"><button class="tmore" id="thead">Updated today ('+L.length+') <span id="tarr">\u25BE</span></button><div id="tlist" hidden>'+L.map(item).join("")+'</div></div>';
 }
 function home(){
   const q=$("#q").value.toLowerCase().trim();
@@ -1255,8 +1253,8 @@ function home(){
     return `<div class="fbar" data-f="${f.id}"><div><h2>${f.name}</h2><p>${f.desc}</p></div><div class="n">${n} ${n===1?"lesson":"lessons"}<span class="arr">›</span></div></div>`}).join("")+'</div>';
   document.querySelectorAll(".fbar").forEach(e=>e.onclick=()=>{location.hash=e.dataset.f});
   bindItems();
-  const tm=document.querySelector("#tmore");
-  if(tm)tm.onclick=()=>{const rows=document.querySelectorAll(".trow[hidden]");if(rows.length){rows.forEach(r=>r.hidden=false);tm.textContent="Show less"}else{document.querySelectorAll(".trow").forEach((r,j)=>{if(j>=5)r.hidden=true});tm.textContent="Show all "+document.querySelectorAll(".trow").length}};
+  const th=document.querySelector("#thead");
+  if(th)th.onclick=()=>{const l=document.querySelector("#tlist");l.hidden=!l.hidden;document.querySelector("#tarr").textContent=l.hidden?"\u25BE":"\u25B4"};
   const lt=document.querySelector("#lotd");
   if(lt){
     lt.onclick=()=>{location.hash="lesson-"+lt.dataset.i};
