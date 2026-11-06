@@ -54,6 +54,9 @@ h3{font-size:13px;margin:20px 0 8px;text-transform:uppercase;letter-spacing:.12e
 .note{margin-top:16px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px}
 .empty{padding:30px;text-align:center;color:var(--muted)}
 
+.today{margin-bottom:16px}
+.today .trow[hidden]{display:none}
+.tmore{width:100%;background:transparent;border:1px solid var(--line);color:var(--accent);border-radius:12px;padding:10px;font:inherit;font-weight:700;cursor:pointer;margin-top:8px}
 .folders{display:flex;flex-direction:column;gap:12px}
 .fbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 24px;border:1px solid var(--line);background:var(--card);border-radius:16px;cursor:pointer;transition:border-color .15s,background .15s}
 .fbar:hover{border-color:var(--accent);background:#121b3a}
@@ -1230,6 +1233,16 @@ function lotdHtml(){
   return `<div class="lotd" id="lotd" data-i="${i}"><img src="${l.poster}" alt=""><div><div class="lk">Lesson of the day</div><h3>${l.title}</h3><p>${l.summary}</p><div class="lm">${f?f.name+" \u00B7 ":""}${l.level} \u00B7 ${l.dur}</div><div class="wbtns"><button id="lotdgo">Watch now</button><button class="alt" id="lotdmore">\u21BB Show another</button></div></div></div>`;
 }
 
+function todayHtml(){
+  const t=new Date(),k=t.getFullYear()+"-"+t.getMonth()+"-"+t.getDate();
+  const L=LESSONS.filter(l=>{if(!l.added)return false;const d=new Date(l.added);return d.getFullYear()+"-"+d.getMonth()+"-"+d.getDate()===k})
+    .sort((a,b)=>new Date(b.added)-new Date(a.added)||LESSONS.indexOf(b)-LESSONS.indexOf(a));
+  if(!L.length)return "";
+  const cap=5;
+  return '<div class="today"><div class="rtitle">Updated today ('+L.length+')</div>'+
+    L.map((l,j)=>'<div class="trow"'+(j>=cap?' hidden':'')+'>'+item(l)+'</div>').join("")+
+    (L.length>cap?'<button class="tmore" id="tmore">Show all '+L.length+'</button>':'')+'</div>';
+}
 function home(){
   const q=$("#q").value.toLowerCase().trim();
   if(q){
@@ -1237,9 +1250,12 @@ function home(){
     $("#view").innerHTML='<div class="rtitle">Search results</div>'+(r.length?r.map(item).join(""):'<div class="empty">No matching lessons</div>');
     bindItems();return;
   }
-  $("#view").innerHTML=lotdHtml()+'<div class="folders">'+FOLDERS.map(f=>{const n=inFolder(f.id).length;
+  $("#view").innerHTML=lotdHtml()+todayHtml()+'<div class="folders">'+FOLDERS.map(f=>{const n=inFolder(f.id).length;
     return `<div class="fbar" data-f="${f.id}"><div><h2>${f.name}</h2><p>${f.desc}</p></div><div class="n">${n} ${n===1?"lesson":"lessons"}<span class="arr">›</span></div></div>`}).join("")+'</div>';
   document.querySelectorAll(".fbar").forEach(e=>e.onclick=()=>{location.hash=e.dataset.f});
+  bindItems();
+  const tm=document.querySelector("#tmore");
+  if(tm)tm.onclick=()=>{const rows=document.querySelectorAll(".trow[hidden]");if(rows.length){rows.forEach(r=>r.hidden=false);tm.textContent="Show less"}else{document.querySelectorAll(".trow").forEach((r,j)=>{if(j>=5)r.hidden=true});tm.textContent="Show all "+document.querySelectorAll(".trow").length}};
   const lt=document.querySelector("#lotd");
   if(lt){
     lt.onclick=()=>{location.hash="lesson-"+lt.dataset.i};
